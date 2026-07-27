@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambev - Portal de Clientes</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --sidebar-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --border: #334155;
+            --code-bg: #090d16;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar */
+        aside { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; font-size: 1.1rem; font-weight: bold; border-bottom: 1px solid var(--border); color: var(--accent); }
+        .sidebar-menu { padding: 20px; list-style: none; overflow-y: auto; flex: 1; }
+        .sidebar-menu li { margin-bottom: 10px; }
+        .sidebar-menu a { color: var(--text-muted); text-decoration: none; display: block; padding: 8px 12px; border-radius: 6px; transition: 0.2s; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background-color: var(--border); color: var(--text-main); }
+        .menu-category { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin: 15px 0 5px 12px; letter-spacing: 0.05em; }
+
+        /* Main Content */
+        main { flex: 1; padding: 40px; overflow-y: auto; }
+        h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .subtitle { color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; }
+        
+        .section-box { background-color: var(--sidebar-bg); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .section-box h3 { margin-bottom: 12px; color: var(--accent); font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        
+        p, ul { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+        ul { padding-left: 20px; margin-top: 5px; }
+        li strong { color: var(--text-main); }
+        
+        pre { background-color: var(--code-bg); border: 1px solid var(--border); padding: 15px; border-radius: 6px; overflow-x: auto; margin-top: 10px; }
+        code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.85rem; color: #e2e8f0; }
+        
+        .badge { display: inline-block; background-color: #334155; color: #f1f5f9; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; }
+        a.link-item { color: var(--accent); text-decoration: none; }
+        a.link-item:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="sidebar-header">🚀 Portal de Clientes</div>
+        <ul class="sidebar-menu">
+            <li><a href="../index.html">Visão Geral</a></li>
+            
+            <div class="menu-category">Clientes</div>
+            <li><a href="ambev.html" class="active">Ambev</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <h1>Ambev</h1>
+        <p class="subtitle">Time: <span class="badge">GOV</span> • Projetos: Genie Cost, Log AAS</p>
+
+        <div class="section-box">
+            <h3>🔑 Informações de Acesso</h3>
+            <p><strong>Usuário de Serviço:</strong> <code>srv_saleslab@ab-inbev.com</code></p>
+            <p><strong>Senha:</strong> <code>GU$2"G4L9067kD7Q:Pm,vrz;%k{*qr@u</code></p>
+        </div>
+
+        <div class="section-box">
+            <h3>🌐 Servidores SAZ</h3>
+            <ul>
+                <li><strong>SAZ - CSC:</strong> <code>brewdatsazfabric08p</code></li>
+                <li><strong>SAZ - B2B:</strong> <code>brewdatsazfabric06p</code> (GEOS)</li>
+                <li><strong>SAZ - Sales_Lab_Critico:</strong> <code>brewdatsazfabric09p</code></li>
+                <li><strong>SAZ - Sales_Lab_Prod:</strong> <code>brewdatsazfabric10p</code> (PROD)</li>
+                <li><strong>SAZ - Sales_Lab_SSBI:</strong> <code>brewdatsazfabric11p</code> (DEV)</li>
+            </ul>
+        </div>
+
+        <div class="section-box">
+            <h3>💻 Queries & Consultas Úteis</h3>
+            
+            <p style="margin-bottom: 5px; color: var(--text-main);"><strong>Consulta para avaliar capacity PBI:</strong></p>
+            <pre><code>PowerBIDatasetsWorkspace
+| where PowerBIWorkspaceId == "DB989EE3-0185-41CD-80A3-F1F56B065054"
+| where OperationName in ("VertiPaqSEQueryBegin", "VertiPaqSEQueryEnd")
+| extend ReportId = tostring(parse_json(ApplicationContext).Sources[0].ReportId)
+| extend VisualId = tostring(parse_json(ApplicationContext).Sources[0].VisualId)
+| summarize 
+    StartTime = minif(TimeGenerated, OperationName == "VertiPaqSEQueryBegin"),
+    EndTime = maxif(TimeGenerated, OperationName == "VertiPaqSEQueryEnd"),
+    EventText = anyif(EventText, OperationName == "VertiPaqSEQueryBegin"),
+    CpuTimeMs = maxif(CpuTimeMs, OperationName == "VertiPaqSEQueryEnd"),
+    ExecutingUser = any(ExecutingUser),
+    ArtifactName = any(ArtifactName),
+    ReportId = any(ReportId),
+    VisualId = any(VisualId)
+    by XmlaRequestId
+| where isnotempty(EndTime)
+| extend DurationMs = datetime_diff('millisecond', EndTime, StartTime)
+| summarize 
+    TotalExecucoes = count(),
+    AvgDurationMs = avg(DurationMs),
+    MaxDurationMs = max(DurationMs),
+    TotalCpuMs = sum(CpuTimeMs),
+    Usuarios = dcount(ExecutingUser)
+    by ArtifactName, ReportId, VisualId
+| order by TotalCpuMs desc</code></pre>
+
+            <p style="margin: 15px 0 5px 0; color: var(--text-main);"><strong>Query por usuário:</strong></p>
+            <pre><code>let escopo = PowerBIDatasetsWorkspace
+| where TimeGenerated between (ago(7d) .. now())
+| where PowerBIWorkspaceId =~ "db989ee3-0185-41cd-80a3-f1f56b065054"
+| where ArtifactId =~ "e3e732fb-e498-41c5-8c52-e040ec57a3b7";
+escopo
+| where OperationName == "QueryEnd" and OperationDetailName == "DAXQuery"
+| extend ReportId = tostring(parse_json(ApplicationContext).Sources[0].ReportId),
+         VisualId = tostring(parse_json(ApplicationContext).Sources[0].VisualId)
+| project TimeGenerated, XmlaRequestId, ReportId, VisualId, ExecutingUser,
+          DurationMs, CpuTimeMs, DaxQuery = EventText
+| order by CpuTimeMs desc
+| take 50</code></pre>
+        </div>
+
+        <div class="section-box">
+            <h3>🔗 Links Úteis</h3>
+            <ul>
+                <li><strong>Repositório PBIAudit:</strong> <a href="https://dev.azure.com/AMBEV-SA/AMBEV-ANALYTICS/_git/PBIAudit" target="_blank" class="link-item">Azure DevOps - PBIAudit</a></li>
+                <li><strong>Databricks App (Biaudit):</strong> <a href="https://biaaudit-1820723078635205.5.azure.databricksapps.com/api/performance/" target="_blank" class="link-item">Databricks API Performance</a></li>
+            </ul>
+        </div>
+    </main>
+
+</body>
+</html>
