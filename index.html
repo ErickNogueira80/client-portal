@@ -12,6 +12,7 @@
             --text-muted: #94a3b8;
             --accent: #3b82f6;
             --border: #334155;
+            --code-bg: #090d16;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
@@ -27,25 +28,30 @@
 
         /* Main Content */
         main { flex: 1; padding: 40px; overflow-y: auto; }
-        h1 { font-size: 1.8rem; margin-bottom: 10px; }
-        p { color: var(--text-muted); margin-bottom: 20px; }
+        h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        p.subtitle { color: var(--text-muted); margin-bottom: 25px; }
         
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
-        .card { background-color: var(--sidebar-bg); border: 1px solid var(--border); padding: 20px; border-radius: 8px; transition: 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
-        .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        /* Filtros em Cascata */
+        .filters-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; background-color: var(--sidebar-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); }
+        .filter-group { display: flex; flex-direction: column; }
+        .filter-group label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .filter-group select { background-color: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border); padding: 10px; border-radius: 6px; font-size: 0.95rem; outline: none; transition: 0.2s; cursor: pointer; }
+        .filter-group select:focus { border-color: var(--accent); }
+
+        /* Área de Conteúdo Dinâmico */
+        .content-section { background-color: var(--sidebar-bg); border: 1px solid var(--border); padding: 25px; border-radius: 8px; display: none; }
+        .content-section.active { display: block; }
+        .content-section h3 { margin-bottom: 15px; color: var(--accent); font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         
-        .card-header { text-decoration: none; color: inherit; margin-bottom: 12px; display: block; }
-        .card-header h3 { margin-bottom: 5px; color: var(--text-main); font-size: 1.3rem; }
+        .info-block { margin-bottom: 15px; }
+        .info-block strong { color: var(--text-main); }
+        p, ul { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+        ul { padding-left: 20px; }
         
-        .team-section { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 8px; }
-        .team-title { font-size: 0.85rem; font-weight: bold; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
-        
-        .card-projects { font-size: 0.9rem; color: var(--text-muted); }
-        .card-projects span { margin: 0 4px; color: var(--border); }
-        .project-link { color: var(--text-main); text-decoration: none; transition: 0.2s; }
-        .project-link:hover { color: var(--accent); text-decoration: underline; }
-        
-        .badge { display: inline-block; background-color: #334155; color: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; }
+        pre { background-color: var(--code-bg); border: 1px solid var(--border); padding: 15px; border-radius: 6px; overflow-x: auto; margin-top: 10px; }
+        code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.85rem; color: #e2e8f0; }
+        a.link-item { color: var(--accent); text-decoration: none; }
+        a.link-item:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -53,40 +59,196 @@
     <aside>
         <div class="sidebar-header">🚀 Portal de Clientes</div>
         <ul class="sidebar-menu">
-            <li><a href="index.html" class="active">Visão Geral</a></li>
-            
-            <div class="menu-category">Clientes</div>
-            <li><a href="clientes/ambev.html">Ambev</a></li>
+            <li><a href="index.html" class="active">Visão Geral & Filtros</a></li>
+            <div class="menu-category">Páginas Completas</div>
+            <li><a href="clientes/ambev.html">Ambev (Completo)</a></li>
         </ul>
     </aside>
 
     <main>
-        <h1>Painel Geral</h1>
-        <p>Selecione um cliente ou navegue diretamente pelos times e projetos abaixo.</p>
+        <h1>Painel de Navegação Dinâmica</h1>
+        <p class="subtitle">Selecione o Cliente, o Time e o Projeto para filtrar as informações correspondentes.</p>
 
-        <div class="card-grid">
-            <div class="card">
-                <div>
-                    <a href="clientes/ambev.html" class="card-header">
-                        <h3>Ambev</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-muted);">Acessos, servidores e base de consultas</p>
-                    </a>
+        <div class="filters-container">
+            <div class="filter-group">
+                <label for="select-cliente">Cliente</label>
+                <select id="select-cliente" onchange="atualizarTimes()">
+                    <option value="">Selecione o Cliente...</option>
+                    <option value="ambev">Ambev</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="select-time">Time</label>
+                <select id="select-time" onchange="atualizarProjetos()" disabled>
+                    <option value="">Selecione o Time...</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="select-projeto">Projeto</label>
+                <select id="select-projeto" onchange="exibirConteudo()" disabled>
+                    <option value="">Selecione o Projeto...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="resultado-conteudo">
+            <p style="text-align: center; color: var(--text-muted); padding: 40px;">Utilize os filtros acima para exibir os dados do projeto.</p>
+        </div>
+    </main>
+
+    <script>
+        // Banco de dados interno dos dados estruturados
+        const dadosPortal = {
+            ambev: {
+                nome: "Ambev",
+                times: {
+                    gov: {
+                        nome: "Time: GOV",
+                        projetos: {
+                            "genie-cost": {
+                                nome: "Genie Cost",
+                                acessos: `
+                                    <p><strong>Usuário de Serviço:</strong> <code>srv_saleslab@ab-inbev.com</code></p>
+                                    <p><strong>Senha:</strong> <code>GU$2"G4L9067kD7Q:Pm,vrz;%k{*qr@u</code></p>
+                                `,
+                                servidores: `
+                                    <ul>
+                                        <li><strong>SAZ - CSC:</strong> <code>brewdatsazfabric08p</code></li>
+                                        <li><strong>SAZ - B2B:</strong> <code>brewdatsazfabric06p</code> (GEOS)</li>
+                                        <li><strong>SAZ - Sales_Lab_Prod:</strong> <code>brewdatsazfabric10p</code> (PROD)</li>
+                                    </ul>
+                                `,
+                                queries: `
+                                    <p style="color: var(--text-main); margin-bottom: 5px;"><strong>Consulta para avaliar capacity PBI:</strong></p>
+                                    <pre><code>PowerBIDatasetsWorkspace\n| where PowerBIWorkspaceId == "DB989EE3-0185-41CD-80A3-F1F56B065054"\n| where OperationName in ("VertiPaqSEQueryBegin", "VertiPaqSEQueryEnd")\n| summarize TotalExecucoes = count(), TotalCpuMs = sum(CpuTimeMs) by ArtifactName</code></pre>
+                                `,
+                                links: `
+                                    <ul>
+                                        <li><a href="https://dev.azure.com/AMBEV-SA/AMBEV-ANALYTICS/_git/PBIAudit" target="_blank" class="link-item">Repositório PBIAudit (Azure DevOps)</a></li>
+                                    </ul>
+                                `
+                            },
+                            "log-aas": {
+                                nome: "Log AAS",
+                                acessos: `
+                                    <p><strong>Usuário de Serviço:</strong> <code>srv_saleslab@ab-inbev.com</code></p>
+                                    <p><strong>Ambiente Log AAS:</strong> Configurado via SAZ - Sales_Lab_Critico</p>
+                                `,
+                                servidores: `
+                                    <ul>
+                                        <li><strong>SAZ - Sales_Lab_Critico:</strong> <code>brewdatsazfabric09p</code></li>
+                                        <li><strong>SAZ - Sales_Lab_SSBI:</strong> <code>brewdatsazfabric11p</code> (DEV)</li>
+                                    </ul>
+                                `,
+                                queries: `
+                                    <p style="color: var(--text-main); margin-bottom: 5px;"><strong>Query por usuário (Log AAS):</strong></p>
+                                    <pre><code>let escopo = PowerBIDatasetsWorkspace\n| where TimeGenerated between (ago(7d) .. now())\n| where PowerBIWorkspaceId =~ "db989ee3-0185-41cd-80a3-f1f56b065054";\nescopo\n| take 50</code></pre>
+                                `,
+                                links: `
+                                    <ul>
+                                        <li><a href="https://biaaudit-1820723078635205.5.azure.databricksapps.com/api/performance/" target="_blank" class="link-item">Databricks API Performance</a></li>
+                                    </ul>
+                                `
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        function atualizarTimes() {
+            const clienteKey = document.getElementById("select-cliente").value;
+            const selectTime = document.getElementById("select-time");
+            const selectProjeto = document.getElementById("select-projeto");
+            const container = document.getElementById("resultado-conteudo");
+
+            // Resetar selects inferiores
+            selectTime.innerHTML = '<option value="">Selecione o Time...</option>';
+            selectProjeto.innerHTML = '<option value="">Selecione o Projeto...</option>';
+            selectProjeto.disabled = true;
+            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Utilize os filtros acima para exibir os dados do projeto.</p>';
+
+            if (!clienteKey) {
+                selectTime.disabled = true;
+                return;
+            }
+
+            const times = dadosPortal[clienteKey].times;
+            for (let tKey in times) {
+                let opt = document.createElement("option");
+                opt.value = tKey;
+                opt.textContent = times[tKey].nome;
+                selectTime.appendChild(opt);
+            }
+            selectTime.disabled = false;
+        }
+
+        function atualizarProjetos() {
+            const clienteKey = document.getElementById("select-cliente").value;
+            const timeKey = document.getElementById("select-time").value;
+            const selectProjeto = document.getElementById("select-projeto");
+            const container = document.getElementById("resultado-conteudo");
+
+            selectProjeto.innerHTML = '<option value="">Selecione o Projeto...</option>';
+            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Utilize os filtros acima para exibir os dados do projeto.</p>';
+
+            if (!timeKey) {
+                selectProjeto.disabled = true;
+                return;
+            }
+
+            const projetos = dadosPortal[clienteKey].times[timeKey].projetos;
+            for (let pKey in projetos) {
+                let opt = document.createElement("option");
+                opt.value = pKey;
+                opt.textContent = projetos[pKey].nome;
+                selectProjeto.appendChild(opt);
+            }
+            selectProjeto.disabled = false;
+        }
+
+        function exibirConteudo() {
+            const clienteKey = document.getElementById("select-cliente").value;
+            const timeKey = document.getElementById("select-time").value;
+            const projetoKey = document.getElementById("select-projeto").value;
+            const container = document.getElementById("resultado-conteudo");
+
+            if (!projetoKey) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Utilize os filtros acima para exibir os dados do projeto.</p>';
+                return;
+            }
+
+            const projData = dadosPortal[clienteKey].times[timeKey].projetos[projetoKey];
+
+            container.innerHTML = `
+                <div class="content-section active">
+                    <h3>📁 Projeto: ${projData.nome}</h3>
                     
-                    <div class="team-section">
-                        <div class="team-title">
-                            <span>Time: GOV</span>
-                            <span class="badge">Ativo</span>
-                        </div>
-                        <div class="card-projects">
-                            <strong>Projetos:</strong> 
-                            <a href="clientes/ambev.html" class="project-link">Genie Cost</a> <span>|</span> 
-                            <a href="clientes/ambev.html" class="project-link">Log AAS</a>
-                        </div>
+                    <div class="info-block" style="margin-top: 15px;">
+                        <strong style="color: var(--accent);">🔑 Acessos:</strong>
+                        ${projData.acessos}
+                    </div>
+
+                    <div class="info-block" style="margin-top: 15px;">
+                        <strong style="color: var(--accent);">🌐 Servidores SAZ / Ambientes:</strong>
+                        ${projData.servidores}
+                    </div>
+
+                    <div class="info-block" style="margin-top: 15px;">
+                        <strong style="color: var(--accent);">💻 Queries Úteis:</strong>
+                        ${projData.queries}
+                    </div>
+
+                    <div class="info-block" style="margin-top: 15px;">
+                        <strong style="color: var(--accent);">🔗 Links Úteis:</strong>
+                        ${projData.links}
                     </div>
                 </div>
-            </div>
-            </div>
-    </main>
+            `;
+        }
+    </script>
 
 </body>
 </html>
