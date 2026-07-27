@@ -17,34 +17,30 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
         
-        /* Sidebar */
-        aside { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        /* Sidebar Estilizada com Árvore de Navegação */
+        aside { width: 300px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .sidebar-header { padding: 20px; font-size: 1.1rem; font-weight: bold; border-bottom: 1px solid var(--border); color: var(--accent); }
-        .sidebar-menu { padding: 20px; list-style: none; overflow-y: auto; flex: 1; }
-        .sidebar-menu li { margin-bottom: 10px; }
-        .sidebar-menu a { color: var(--text-muted); text-decoration: none; display: block; padding: 8px 12px; border-radius: 6px; transition: 0.2s; }
-        .sidebar-menu a:hover, .sidebar-menu a.active { background-color: var(--border); color: var(--text-main); }
-        .menu-category { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin: 15px 0 5px 12px; letter-spacing: 0.05em; }
+        .sidebar-menu { padding: 15px; list-style: none; overflow-y: auto; flex: 1; }
+        
+        .menu-category { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin: 15px 0 8px 8px; letter-spacing: 0.05em; }
+        
+        /* Hierarquia da Barra Lateral */
+        .tree-cliente { font-weight: bold; color: var(--text-main); padding: 8px 10px; border-radius: 6px; background-color: rgba(59, 130, 246, 0.1); margin-bottom: 6px; }
+        .tree-time { font-size: 0.85rem; color: var(--accent); text-transform: uppercase; padding: 6px 10px 4px 20px; font-weight: 600; letter-spacing: 0.03em; }
+        .tree-projetos { list-style: none; padding-left: 20px; margin-bottom: 10px; }
+        .tree-projetos li a { color: var(--text-muted); text-decoration: none; display: block; padding: 6px 10px; border-radius: 4px; transition: 0.2s; font-size: 0.9rem; }
+        .tree-projetos li a:hover, .tree-projetos li a.active { background-color: var(--border); color: var(--text-main); }
 
         /* Main Content */
         main { flex: 1; padding: 40px; overflow-y: auto; }
-        h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        h1 { font-size: 1.8rem; margin-bottom: 10px; }
         p.subtitle { color: var(--text-muted); margin-bottom: 25px; }
         
-        /* Filtros em Cascata */
-        .filters-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; background-color: var(--sidebar-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); }
-        .filter-group { display: flex; flex-direction: column; }
-        .filter-group label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-        .filter-group select { background-color: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border); padding: 10px; border-radius: 6px; font-size: 0.95rem; outline: none; transition: 0.2s; cursor: pointer; }
-        .filter-group select:focus { border-color: var(--accent); }
-
-        /* Área de Conteúdo Dinâmico */
         .content-section { background-color: var(--sidebar-bg); border: 1px solid var(--border); padding: 25px; border-radius: 8px; display: none; }
         .content-section.active { display: block; }
         .content-section h3 { margin-bottom: 15px; color: var(--accent); font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         
         .info-block { margin-bottom: 15px; }
-        .info-block strong { color: var(--text-main); }
         p, ul { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
         ul { padding-left: 20px; }
         
@@ -59,194 +55,127 @@
     <aside>
         <div class="sidebar-header">🚀 Portal de Clientes</div>
         <ul class="sidebar-menu">
-            <li><a href="index.html" class="active">Visão Geral & Filtros</a></li>
-            <div class="menu-category">Páginas Completas</div>
-            <li><a href="clientes/ambev.html">Ambev (Completo)</a></li>
-        </ul>
+            <li><a href="#" onclick="mostrarHome()" style="color: var(--text-main); text-decoration: none; display: block; padding: 8px 10px; margin-bottom: 15px; border-radius: 6px; background: var(--border);">🏠 Visão Geral</a></li>
+            
+            <div class="menu-category">Estrutura de Clientes</div>
+            
+            <li class="tree-cliente">Ambev</li>
+            <div class="tree-time">Time: GOV</div>
+            <ul class="tree-projetos">
+                <li><a href="#" onclick="carregarProjeto('genie-cost', this)" id="link-genie-cost">⚡ Genie Cost</a></li>
+                <li><a href="#" onclick="carregarProjeto('log-aas', this)" id="link-log-aas">📊 Log AAS</a></li>
+            </ul>
+            </ul>
     </aside>
 
     <main>
-        <h1>Painel de Navegação Dinâmica</h1>
-        <p class="subtitle">Selecione o Cliente, o Time e o Projeto para filtrar as informações correspondentes.</p>
-
-        <div class="filters-container">
-            <div class="filter-group">
-                <label for="select-cliente">Cliente</label>
-                <select id="select-cliente" onchange="atualizarTimes()">
-                    <option value="">Selecione o Cliente...</option>
-                    <option value="ambev">Ambev</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="select-time">Time</label>
-                <select id="select-time" onchange="atualizarProjetos()" disabled>
-                    <option value="">Selecione o Time...</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="select-projeto">Projeto</label>
-                <select id="select-projeto" onchange="exibirConteudo()" disabled>
-                    <option value="">Selecione o Projeto...</option>
-                </select>
-            </div>
+        <div id="home-view">
+            <h1>Painel Geral</h1>
+            <p class="subtitle">Selecione um projeto na barra lateral esquerda para visualizar acessos, servidores e queries.</p>
         </div>
 
-        <div id="resultado-conteudo">
-            <p style="text-align: center; color: var(--text-muted); padding: 40px;">Utilize os filtros acima para exibir os dados do projeto.</p>
+        <div id="projeto-view" class="content-section">
+            <h3 id="proj-titulo">📁 Projeto</h3>
+            
+            <div class="info-block" style="margin-top: 15px;">
+                <strong style="color: var(--accent);">🔑 Acessos:</strong>
+                <div id="proj-acessos"></div>
+            </div>
+
+            <div class="info-block" style="margin-top: 15px;">
+                <strong style="color: var(--accent);">🌐 Servidores SAZ / Ambientes:</strong>
+                <div id="proj-servidores"></div>
+            </div>
+
+            <div class="info-block" style="margin-top: 15px;">
+                <strong style="color: var(--accent);">💻 Queries Úteis:</strong>
+                <div id="proj-queries"></div>
+            </div>
+
+            <div class="info-block" style="margin-top: 15px;">
+                <strong style="color: var(--accent);">🔗 Links Úteis:</strong>
+                <div id="proj-links"></div>
+            </div>
         </div>
     </main>
 
     <script>
-        // Banco de dados interno dos dados estruturados
-        const dadosPortal = {
-            ambev: {
-                nome: "Ambev",
-                times: {
-                    gov: {
-                        nome: "Time: GOV",
-                        projetos: {
-                            "genie-cost": {
-                                nome: "Genie Cost",
-                                acessos: `
-                                    <p><strong>Usuário de Serviço:</strong> <code>srv_saleslab@ab-inbev.com</code></p>
-                                    <p><strong>Senha:</strong> <code>GU$2"G4L9067kD7Q:Pm,vrz;%k{*qr@u</code></p>
-                                `,
-                                servidores: `
-                                    <ul>
-                                        <li><strong>SAZ - CSC:</strong> <code>brewdatsazfabric08p</code></li>
-                                        <li><strong>SAZ - B2B:</strong> <code>brewdatsazfabric06p</code> (GEOS)</li>
-                                        <li><strong>SAZ - Sales_Lab_Prod:</strong> <code>brewdatsazfabric10p</code> (PROD)</li>
-                                    </ul>
-                                `,
-                                queries: `
-                                    <p style="color: var(--text-main); margin-bottom: 5px;"><strong>Consulta para avaliar capacity PBI:</strong></p>
-                                    <pre><code>PowerBIDatasetsWorkspace\n| where PowerBIWorkspaceId == "DB989EE3-0185-41CD-80A3-F1F56B065054"\n| where OperationName in ("VertiPaqSEQueryBegin", "VertiPaqSEQueryEnd")\n| summarize TotalExecucoes = count(), TotalCpuMs = sum(CpuTimeMs) by ArtifactName</code></pre>
-                                `,
-                                links: `
-                                    <ul>
-                                        <li><a href="https://dev.azure.com/AMBEV-SA/AMBEV-ANALYTICS/_git/PBIAudit" target="_blank" class="link-item">Repositório PBIAudit (Azure DevOps)</a></li>
-                                    </ul>
-                                `
-                            },
-                            "log-aas": {
-                                nome: "Log AAS",
-                                acessos: `
-                                    <p><strong>Usuário de Serviço:</strong> <code>srv_saleslab@ab-inbev.com</code></p>
-                                    <p><strong>Ambiente Log AAS:</strong> Configurado via SAZ - Sales_Lab_Critico</p>
-                                `,
-                                servidores: `
-                                    <ul>
-                                        <li><strong>SAZ - Sales_Lab_Critico:</strong> <code>brewdatsazfabric09p</code></li>
-                                        <li><strong>SAZ - Sales_Lab_SSBI:</strong> <code>brewdatsazfabric11p</code> (DEV)</li>
-                                    </ul>
-                                `,
-                                queries: `
-                                    <p style="color: var(--text-main); margin-bottom: 5px;"><strong>Query por usuário (Log AAS):</strong></p>
-                                    <pre><code>let escopo = PowerBIDatasetsWorkspace\n| where TimeGenerated between (ago(7d) .. now())\n| where PowerBIWorkspaceId =~ "db989ee3-0185-41cd-80a3-f1f56b065054";\nescopo\n| take 50</code></pre>
-                                `,
-                                links: `
-                                    <ul>
-                                        <li><a href="https://biaaudit-1820723078635205.5.azure.databricksapps.com/api/performance/" target="_blank" class="link-item">Databricks API Performance</a></li>
-                                    </ul>
-                                `
-                            }
-                        }
-                    }
-                }
+        // Banco de dados dos projetos da Ambev / GOV
+        const projetosData = {
+            "genie-cost": {
+                titulo: "Ambev > GOV > Genie Cost",
+                acessos: `
+                    <p><strong>Usuário de Serviço:</strong> <code>srv_saleslab@ab-inbev.com</code></p>
+                    <p><strong>Senha:</strong> <code>GU$2"G4L9067kD7Q:Pm,vrz;%k{*qr@u</code></p>
+                `,
+                servidores: `
+                    <ul>
+                        <li><strong>SAZ - CSC:</strong> <code>brewdatsazfabric08p</code></li>
+                        <li><strong>SAZ - B2B:</strong> <code>brewdatsazfabric06p</code> (GEOS)</li>
+                        <li><strong>SAZ - Sales_Lab_Prod:</strong> <code>brewdatsazfabric10p</code> (PROD)</li>
+                    </ul>
+                `,
+                queries: `
+                    <p style="color: var(--text-main); margin-bottom: 5px;"><strong>Consulta para avaliar capacity PBI:</strong></p>
+                    <pre><code>PowerBIDatasetsWorkspace\n| where PowerBIWorkspaceId == "DB989EE3-0185-41CD-80A3-F1F56B065054"\n| where OperationName in ("VertiPaqSEQueryBegin", "VertiPaqSEQueryEnd")\n| summarize TotalExecucoes = count(), TotalCpuMs = sum(CpuTimeMs) by ArtifactName</code></pre>
+                `,
+                links: `
+                    <ul>
+                        <li><a href="https://dev.azure.com/AMBEV-SA/AMBEV-ANALYTICS/_git/PBIAudit" target="_blank" class="link-item">Repositório PBIAudit (Azure DevOps)</a></li>
+                    </ul>
+                `
+            },
+            "log-aas": {
+                titulo: "Ambev > GOV > Log AAS",
+                acessos: `
+                    <p><strong>Usuário de Serviço:</strong> <code>srv_saleslab@ab-inbev.com</code></p>
+                    <p><strong>Ambiente Log AAS:</strong> Configurado via SAZ - Sales_Lab_Critico</p>
+                `,
+                servidores: `
+                    <ul>
+                        <li><strong>SAZ - Sales_Lab_Critico:</strong> <code>brewdatsazfabric09p</code></li>
+                        <li><strong>SAZ - Sales_Lab_SSBI:</strong> <code>brewdatsazfabric11p</code> (DEV)</li>
+                    </ul>
+                `,
+                queries: `
+                    <p style="color: var(--text-main); margin-bottom: 5px;"><strong>Query por usuário (Log AAS):</strong></p>
+                    <pre><code>let escopo = PowerBIDatasetsWorkspace\n| where TimeGenerated between (ago(7d) .. now())\n| where PowerBIWorkspaceId =~ "db989ee3-0185-41cd-80a3-f1f56b065054";\nescopo\n| take 50</code></pre>
+                `,
+                links: `
+                    <ul>
+                        <li><a href="https://biaaudit-1820723078635205.5.azure.databricksapps.com/api/performance/" target="_blank" class="link-item">Databricks API Performance</a></li>
+                    </ul>
+                `
             }
         };
 
-        function atualizarTimes() {
-            const clienteKey = document.getElementById("select-cliente").value;
-            const selectTime = document.getElementById("select-time");
-            const selectProjeto = document.getElementById("select-projeto");
-            const container = document.getElementById("resultado-conteudo");
-
-            // Resetar selects inferiores
-            selectTime.innerHTML = '<option value="">Selecione o Time...</option>';
-            selectProjeto.innerHTML = '<option value="">Selecione o Projeto...</option>';
-            selectProjeto.disabled = true;
-            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Utilize os filtros acima para exibir os dados do projeto.</p>';
-
-            if (!clienteKey) {
-                selectTime.disabled = true;
-                return;
-            }
-
-            const times = dadosPortal[clienteKey].times;
-            for (let tKey in times) {
-                let opt = document.createElement("option");
-                opt.value = tKey;
-                opt.textContent = times[tKey].nome;
-                selectTime.appendChild(opt);
-            }
-            selectTime.disabled = false;
+        function mostrarHome() {
+            document.getElementById("home-view").style.display = "block";
+            document.getElementById("projeto-view").classList.remove("active");
+            
+            // Remover classe ativa dos links
+            document.querySelectorAll('.tree-projetos a').forEach(el => el.classList.remove('active'));
         }
 
-        function atualizarProjetos() {
-            const clienteKey = document.getElementById("select-cliente").value;
-            const timeKey = document.getElementById("select-time").value;
-            const selectProjeto = document.getElementById("select-projeto");
-            const container = document.getElementById("resultado-conteudo");
+        function carregarProjeto(id, elemento) {
+            const projeto = projetosData[id];
+            if (!projeto) return;
 
-            selectProjeto.innerHTML = '<option value="">Selecione o Projeto...</option>';
-            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Utilize os filtros acima para exibir os dados do projeto.</p>';
+            // Ocultar home e mostrar view de projeto
+            document.getElementById("home-view").style.display = "none";
+            const view = document.getElementById("projeto-view");
+            view.classList.add("active");
 
-            if (!timeKey) {
-                selectProjeto.disabled = true;
-                return;
-            }
+            // Preencher dados
+            document.getElementById("proj-titulo").textContent = "📁 Projeto: " + projeto.titulo;
+            document.getElementById("proj-acessos").innerHTML = projeto.acessos;
+            document.getElementById("proj-servidores").innerHTML = projeto.servidores;
+            document.getElementById("proj-queries").innerHTML = projeto.queries;
+            document.getElementById("proj-links").innerHTML = projeto.links;
 
-            const projetos = dadosPortal[clienteKey].times[timeKey].projetos;
-            for (let pKey in projetos) {
-                let opt = document.createElement("option");
-                opt.value = pKey;
-                opt.textContent = projetos[pKey].nome;
-                selectProjeto.appendChild(opt);
-            }
-            selectProjeto.disabled = false;
-        }
-
-        function exibirConteudo() {
-            const clienteKey = document.getElementById("select-cliente").value;
-            const timeKey = document.getElementById("select-time").value;
-            const projetoKey = document.getElementById("select-projeto").value;
-            const container = document.getElementById("resultado-conteudo");
-
-            if (!projetoKey) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Utilize os filtros acima para exibir os dados do projeto.</p>';
-                return;
-            }
-
-            const projData = dadosPortal[clienteKey].times[timeKey].projetos[projetoKey];
-
-            container.innerHTML = `
-                <div class="content-section active">
-                    <h3>📁 Projeto: ${projData.nome}</h3>
-                    
-                    <div class="info-block" style="margin-top: 15px;">
-                        <strong style="color: var(--accent);">🔑 Acessos:</strong>
-                        ${projData.acessos}
-                    </div>
-
-                    <div class="info-block" style="margin-top: 15px;">
-                        <strong style="color: var(--accent);">🌐 Servidores SAZ / Ambientes:</strong>
-                        ${projData.servidores}
-                    </div>
-
-                    <div class="info-block" style="margin-top: 15px;">
-                        <strong style="color: var(--accent);">💻 Queries Úteis:</strong>
-                        ${projData.queries}
-                    </div>
-
-                    <div class="info-block" style="margin-top: 15px;">
-                        <strong style="color: var(--accent);">🔗 Links Úteis:</strong>
-                        ${projData.links}
-                    </div>
-                </div>
-            `;
+            // Atualizar destaque visual na barra lateral
+            document.querySelectorAll('.tree-projetos a').forEach(el => el.classList.remove('active'));
+            elemento.classList.add('active');
         }
     </script>
 
